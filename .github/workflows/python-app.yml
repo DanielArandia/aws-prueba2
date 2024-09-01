@@ -43,7 +43,8 @@ jobs:
             
             # Hacer pull del repositorio
             git pull origin master
-            
+
+            source env/bin/activate
             # Volver a ejecutar la aplicación Flask
             flask --app hello run --host=0.0.0.0 &
           ENDSSH
