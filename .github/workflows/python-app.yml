@@ -21,26 +21,32 @@ jobs:
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
           aws-region: us-east-1      
 
-      - name: Run a one-line script
-        run: echo Hello, world!
-
-      - name: Run a multi-line script
-        run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
-
       - name: Add SSH key
         uses: shimataro/ssh-key-action@v2
         with:
           key: ${{ secrets.EC2_SSH_KEY }}  # Clave privada SSH
-          known_hosts: ${{ secrets.EC2_HOST }}  # Opcionalmente añadir a known_hosts
+          known_hosts: ${{ secrets.EC2_HOST }}  # IP de la instancia EC2
 
-      - name: Execute command on EC2
+      - name: Update Flask application on EC2
         env:
           EC2_HOST: ${{ secrets.EC2_HOST }}
           EC2_USER: ${{ secrets.EC2_USER }}
         run: |
-          ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST 'bash -s' < ./deploy.sh
+          ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST << 'ENDSSH'
+            # Cambiar al directorio del repositorio
+            cd /home/ubuntu/aws-prueba2
+
+            
+            # Detener la aplicación Flask (por ejemplo, si se ejecuta en segundo plano o con nohup)
+            # Esto puede variar dependiendo de cómo se esté ejecutando la aplicación
+            pkill -f 'flask run' || echo "Flask no estaba corriendo"
+            
+            # Hacer pull del repositorio
+            git pull origin master
+            
+            # Volver a ejecutar la aplicación Flask
+            flask --app hello run --host=0.0.0.0 &
+          ENDSSH
 
       - name: check dir
         run: aws s3 ls
