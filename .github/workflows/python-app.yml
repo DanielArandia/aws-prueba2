@@ -20,9 +20,6 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
           aws-region: us-east-1      
-      - name: Verificar clave SSH
-        run: cat ~/.ssh/id_rsa
-
       - name: Add SSH key
         uses: shimataro/ssh-key-action@v2
         with:
