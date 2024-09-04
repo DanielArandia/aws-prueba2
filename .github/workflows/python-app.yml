@@ -23,7 +23,8 @@ jobs:
       - name: Add SSH key
         uses: shimataro/ssh-key-action@v2
         with:
-          key: ${{ secrets.EC2_SSH_KEY }}  # Clave privada SSH
+          key: ${{ secrets.EC2_SSH_KEY }} 
+          known_hosts: ${{ secrets.EC2_HOST }}
 
       - name: Update Flask application on EC2
         env:
